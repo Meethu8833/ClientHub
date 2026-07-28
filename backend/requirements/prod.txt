@@ -1,0 +1,5 @@
+# Production server on top of base.
+-r base.txt
+gunicorn==26.0.0
+django-storages[s3]==1.14.6
+redis==6.2.0  # client for Django's built-in RedisCache backend (REDIS_URL)

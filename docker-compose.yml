@@ -1,0 +1,24 @@
+# Dev infrastructure. For now only PostgreSQL runs in Docker;
+# Django (runserver) and Vite run on the host for fast reloads.
+# The backend/frontend services join this file in the Docker phase.
+
+services:
+  db:
+    image: postgres:16
+    container_name: clienthub-db
+    restart: unless-stopped
+    env_file: .env            # provides POSTGRES_DB / _USER / _PASSWORD
+    ports:
+      # Host 5433 → container 5432: the todo_website project's Postgres
+      # already occupies host port 5432 on this machine.
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
