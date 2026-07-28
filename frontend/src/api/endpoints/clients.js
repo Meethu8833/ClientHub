@@ -16,6 +16,14 @@ export async function getClient(id) {
   return data;
 }
 
+// GET /clients/check/?name&gst_number&exclude → { name_taken?, gst_number_taken? }
+// Instant duplicate pre-check while the form is being typed into; advisory —
+// the POST/PATCH still enforce for real.
+export async function checkClientAvailability(params) {
+  const { data } = await api.get("/clients/check/", { params });
+  return data;
+}
+
 // Writes answer with the FULL detail shape (the backend re-serializes after
 // saving), so callers can prime the detail cache straight from the response.
 export async function createClient(payload) {

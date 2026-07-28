@@ -5,7 +5,7 @@ import { Button } from "../../../components/ui/Button";
 import { Checkbox } from "../../../components/ui/Checkbox";
 import { Input } from "../../../components/ui/Input";
 import { Modal } from "../../../components/ui/Modal";
-import { applyServerErrors } from "../../../lib/forms";
+import { applyServerErrors, EMAIL_PATTERN, PHONE_PATTERN } from "../../../lib/forms";
 import { useContactMutations } from "../hooks/useContactMutations";
 
 const FIELD_NAMES = ["name", "email", "phone", "position", "is_primary"];
@@ -33,7 +33,12 @@ export function ContactForm({ isOpen, onClose, clientId, contact = null }) {
     reset,
     setError,
     formState: { errors },
-  } = useForm({ defaultValues: toFormValues(contact) });
+  } = useForm({
+    defaultValues: toFormValues(contact),
+    // Same instant-check behavior as ClientForm: validate on first blur,
+    // then on every keystroke.
+    mode: "onTouched",
+  });
 
   useEffect(() => {
     if (isOpen) reset(toFormValues(contact));
@@ -81,8 +86,26 @@ export function ContactForm({ isOpen, onClose, clientId, contact = null }) {
             error={errors.position?.message}
             {...register("position")}
           />
-          <Input label="Email" type="email" error={errors.email?.message} {...register("email")} />
-          <Input label="Phone" error={errors.phone?.message} {...register("phone")} />
+          <Input
+            label="Email"
+            type="email"
+            error={errors.email?.message}
+            {...register("email", {
+              validate: (v) =>
+                v.trim() === "" || EMAIL_PATTERN.test(v.trim()) || "Enter a valid email address.",
+            })}
+          />
+          <Input
+            label="Phone"
+            hint="e.g. +91 98765 43210"
+            error={errors.phone?.message}
+            {...register("phone", {
+              validate: (v) =>
+                v.trim() === "" ||
+                PHONE_PATTERN.test(v.trim()) ||
+                "Enter a valid phone number, e.g. +91 98765 43210.",
+            })}
+          />
           <Checkbox
             label="Primary contact"
             hint="The main person we reach out to — checking this replaces the current primary."

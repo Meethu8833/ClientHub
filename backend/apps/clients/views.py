@@ -94,6 +94,39 @@ class ClientViewSet(viewsets.ModelViewSet):
         services.soft_delete_client(self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=False, methods=["get"])
+    def check(self, request):
+        """
+        GET /clients/check/?name=Acme&gst_number=29ABCDE1234F1Z5&exclude=7
+
+        Instant duplicate pre-check for the create/edit form: says whether a
+        name or GSTIN is already taken while the user is still typing, instead
+        of after submit. Advisory only — the serializer and DB constraints
+        remain the enforcement on write.
+
+        Deliberately queries the FULL table, not the is_active slice: the
+        unique constraints cover soft-deleted rows too, so a check scoped to
+        visible clients would answer "available" for a value the INSERT would
+        still reject.
+        """
+        params = request.query_params
+        qs = Client.objects.all()
+        exclude = params.get("exclude", "")
+        if exclude.isdigit():  # edit mode: a record never conflicts with itself
+            qs = qs.exclude(pk=exclude)
+
+        data = {}
+        name = params.get("name", "").strip()
+        if name:
+            # iexact on purpose, stricter than the column's case-sensitive
+            # unique: "acme corp" next to "Acme Corp" is a data-entry
+            # duplicate in a CRM, and this is the moment to say so.
+            data["name_taken"] = qs.filter(name__iexact=name).exists()
+        gstin = params.get("gst_number", "").strip().upper()
+        if gstin:
+            data["gst_number_taken"] = qs.filter(gst_number=gstin).exists()
+        return Response(data)
+
     @action(detail=True, methods=["get", "post"])
     def contacts(self, request, pk=None):
         client = self.get_object()  # 404s first if the client is soft-deleted

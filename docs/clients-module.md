@@ -19,6 +19,7 @@ pulled forward from Phase 5), `activities` (Notes, pulled forward from Phase 5).
 | Method + URL | Body | Success | Notes |
 |---|---|---|---|
 | `GET /api/v1/clients/` | — | 200 paginated | `?search=` (name/email/phone/GSTIN/city/industry), `?status=`, `?industry=`, `?city=`, `?account_manager=`, `?created_after/before=`, `?ordering=name\|status\|created_at\|updated_at` |
+| `GET /api/v1/clients/check/` | — | 200 `{name_taken?, gst_number_taken?}` | instant duplicate pre-check for the form: `?name=` (case-insensitive), `?gst_number=` (normalized), `?exclude={id}` on edit. Sees soft-deleted rows (the unique constraints do too). Advisory — write validation still enforces |
 | `POST /api/v1/clients/` | client fields | 201 detail shape | manager/admin |
 | `GET /api/v1/clients/{id}/` | — | 200 detail + contacts | |
 | `PATCH /api/v1/clients/{id}/` | changed fields | 200 detail | PUT → 405 |
@@ -26,7 +27,10 @@ pulled forward from Phase 5), `activities` (Notes, pulled forward from Phase 5).
 | `GET /api/v1/clients/{id}/contacts/` | — | 200 paginated | |
 | `POST /api/v1/clients/{id}/contacts/` | contact fields | 201 | client comes from URL |
 
-Client write fields: `name`* (unique), `industry`, `website`, `email`, `phone`,
+Client write fields: `name`* (unique), `industry`, `website`, `email`,
+`phone` (optional — validated `^\+?[0-9](?:[ \-()]{0,2}[0-9]){6,14}$`: optional `+`,
+7–15 digits, space/dash/bracket separators; same rule on `Contact.phone`; the form
+edits it as a country-driven dial-code prefix + number),
 `gst_number` (optional GSTIN — validated `^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$`,
 normalized to uppercase, unique when set), `address_line1/2`, `city`, `state`,
 `postal_code`, `country` (default "India"), `status` (`prospect`|`active`|`inactive`,

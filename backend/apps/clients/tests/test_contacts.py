@@ -68,6 +68,12 @@ def test_nested_create_takes_client_from_url(manager_api, acme):
     assert res.data["is_primary"] is True
 
 
+def test_contact_invalid_phone_rejected(manager_api, acme):
+    res = manager_api.post(contacts_url(acme.id), {"name": "Priya", "phone": "call me maybe"})
+    assert res.status_code == 400
+    assert "phone" in res.data
+
+
 def test_nested_list_is_paginated(manager_api, acme):
     acme.contacts.create(name="A")
     acme.contacts.create(name="B")

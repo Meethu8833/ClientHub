@@ -1,3 +1,10 @@
+// Shape checks shared by the client and contact forms, for instant feedback
+// while typing. The server stays authoritative on submit.
+// PHONE_PATTERN mirrors clients.models.PHONE_VALIDATOR exactly: optional "+"
+// then 7–15 digits, up to two space/dash/bracket separators between digits.
+export const PHONE_PATTERN = /^\+?[0-9](?:[ \-()]{0,2}[0-9]){6,14}$/;
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // Maps a DRF 400 body onto react-hook-form fields (ARCHITECTURE §11:
 // "API validation errors mapped back onto fields").
 //
@@ -20,4 +27,30 @@ export function applyServerErrors(error, setError, fieldNames) {
       setError("root", { message });
     }
   }
+}
+
+// Wraps an async react-hook-form validator so one-call-per-keystroke
+// collapses into a single request after `ms` of quiet. Superseded and failed
+// runs resolve `true` (pass): the newest run owns the verdict, and a network
+// hiccup must never trap the user in an error they can't clear — the server
+// re-validates on submit anyway.
+export function debouncePromise(fn, ms = 400) {
+  let timer = null;
+  let resolveSuperseded = null;
+  return (...args) =>
+    new Promise((resolve) => {
+      if (timer) {
+        clearTimeout(timer);
+        resolveSuperseded(true);
+      }
+      resolveSuperseded = resolve;
+      timer = setTimeout(async () => {
+        timer = null;
+        try {
+          resolve(await fn(...args));
+        } catch {
+          resolve(true);
+        }
+      }, ms);
+    });
 }

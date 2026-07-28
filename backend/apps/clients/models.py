@@ -27,6 +27,16 @@ GSTIN_VALIDATOR = RegexValidator(
     message="Enter a valid 15-character GSTIN, e.g. 29ABCDE1234F1Z5.",
 )
 
+# Phone: optional "+" then 7–15 digits, with up to two space/dash/bracket
+# separator chars between digits — accepts what the form's prefix+number
+# input emits ("+91 98765 43210") as well as "(415) 555-0132" and bare
+# landlines ("0484-2334455"). Format-only, same philosophy as the GSTIN
+# check: no carrier/region lookup. Shared by Client and Contact.
+PHONE_VALIDATOR = RegexValidator(
+    regex=r"^\+?[0-9](?:[ \-()]{0,2}[0-9]){6,14}$",
+    message="Enter a valid phone number, e.g. +91 98765 43210.",
+)
+
 
 class Client(TimeStampedModel):
     """
@@ -50,7 +60,7 @@ class Client(TimeStampedModel):
     # Company-level coordinates (switchboard / info@) — person-level ones
     # live on Contact.
     email = models.EmailField(blank=True)
-    phone = models.CharField(max_length=20, blank=True)
+    phone = models.CharField(max_length=20, blank=True, validators=[PHONE_VALIDATOR])
 
     # -- tax ----------------------------------------------------------------
     # Optional: foreign or unregistered clients have no GSTIN. blank="" rather
@@ -123,7 +133,7 @@ class Contact(TimeStampedModel):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contacts")
     name = models.CharField(max_length=100)
     email = models.EmailField(blank=True)
-    phone = models.CharField(max_length=20, blank=True)
+    phone = models.CharField(max_length=20, blank=True, validators=[PHONE_VALIDATOR])
     position = models.CharField(max_length=100, blank=True)  # "CTO", "Accounts"
     # Exactly one primary per client, guaranteed by the DB itself — application
     # code alone can't prevent two simultaneous requests both writing True.

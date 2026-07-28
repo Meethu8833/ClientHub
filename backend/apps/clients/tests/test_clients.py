@@ -134,6 +134,19 @@ def test_two_clients_may_both_omit_gst(manager_api):
     assert manager_api.post(LIST_URL, payload(name="B Co", gst_number="")).status_code == 201
 
 
+def test_invalid_phone_rejected(manager_api):
+    res = manager_api.post(LIST_URL, payload(phone="not-a-phone"))
+    assert res.status_code == 400
+    assert "phone" in res.data
+
+
+def test_phone_accepts_prefixed_and_local_formats(manager_api):
+    valid = ["+91 98765 43210", "+1 (415) 555-0132", "0484-2334455"]
+    for i, phone in enumerate(valid):
+        res = manager_api.post(LIST_URL, payload(name=f"Phone Co {i}", gst_number="", phone=phone))
+        assert res.status_code == 201, (phone, res.data)
+
+
 def test_duplicate_name_rejected(manager_api, acme):
     res = manager_api.post(LIST_URL, payload(gst_number=""))
     assert res.status_code == 400
@@ -199,3 +212,45 @@ def test_list_rows_carry_contact_count(manager_api, acme):
     acme.contacts.create(name="Priya")
     res = manager_api.get(LIST_URL)
     assert res.data["results"][0]["contact_count"] == 1
+
+
+# ------------------------------------------------- instant duplicate check
+
+CHECK_URL = reverse("clients:client-check")
+
+
+def test_check_reports_taken_name_case_insensitively(manager_api, acme):
+    res = manager_api.get(CHECK_URL, {"name": acme.name.upper()})
+    assert res.status_code == 200
+    assert res.data == {"name_taken": True}
+
+
+def test_check_reports_free_name_and_gstin(manager_api, acme):
+    res = manager_api.get(CHECK_URL, {"name": "Zeta Retail", "gst_number": "27ZZZZZ9999Z9Z9"})
+    assert res.data == {"name_taken": False, "gst_number_taken": False}
+
+
+def test_check_normalizes_gstin_before_matching(manager_api, acme):
+    res = manager_api.get(CHECK_URL, {"gst_number": " 29abcde1234f1z5 "})
+    assert res.data == {"gst_number_taken": True}
+
+
+def test_check_excludes_the_record_being_edited(manager_api, acme):
+    res = manager_api.get(
+        CHECK_URL, {"name": acme.name, "gst_number": acme.gst_number, "exclude": acme.id}
+    )
+    assert res.data == {"name_taken": False, "gst_number_taken": False}
+
+
+def test_check_still_sees_soft_deleted_rows(manager_api, acme):
+    # The unique constraints include soft-deleted rows, so the pre-check must
+    # too — otherwise it says "available" for a value the INSERT would reject.
+    manager_api.delete(detail_url(acme.id))
+    res = manager_api.get(CHECK_URL, {"name": acme.name})
+    assert res.data == {"name_taken": True}
+
+
+def test_check_is_readable_by_staff(staff_api, acme):
+    # GET, so ReadOnlyForStaff allows it — staff never create, but the form
+    # code shouldn't need role branching just to validate.
+    assert staff_api.get(CHECK_URL, {"name": acme.name}).status_code == 200
