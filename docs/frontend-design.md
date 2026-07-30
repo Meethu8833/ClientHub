@@ -360,13 +360,24 @@ role read-only with hint "contact an admin") and Change password (current,
 new ×2, client-side match check, server validators mapped; success → toast +
 re-login if backend rotates tokens).
 
-### 7.10 Users `/admin/users` — archetype A, ADMIN only (RoleGate + server)
+### 7.10 Users `/admin/users` — archetype A, ADMIN only (RoleGate + server) [built]
 
 Columns: Avatar+Name, Email, Role badge, Active, Created, ⋯. Actions: invite/
 create user (modal: email*, names, role, temp password per user-management
 doc), edit role, deactivate/reactivate (never delete — PROTECT on owned
 clients; deactivation kills refresh tokens server-side). Deactivating yourself
 is blocked in UI and server.
+
+As built: the create modal's "Set a password now" checkbox picks between the
+two API flows — on (default) sends `password`, off omits it so the server
+emails an invite. The role select offers all three roles (the API accepts
+`admin` on create; hiding it would only force create-then-promote). "Edit
+details" is a second modal mode for names + `weekly_capacity_hours` — it
+fetches the detail record first, because the list serializer omits capacity
+and PATCHing a default would overwrite a part-timer's contract. Role changes
+get their own dialog (`RoleDialog`), matching the API's separate, guarded
+`assign-role` action. Self-row actions (change role, deactivate) are absent
+rather than disabled, mirroring the server's self-guard.
 
 ### 7.11 Utility pages
 

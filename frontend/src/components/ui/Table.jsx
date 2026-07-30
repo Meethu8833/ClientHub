@@ -9,7 +9,7 @@
 
 function SortIcon({ direction }) {
   return (
-    <span aria-hidden="true" className="ml-1 inline-block w-3 text-gray-400">
+    <span aria-hidden="true" className="ml-1 inline-block w-3 text-gray-400 dark:text-gray-500">
       {direction === "asc" ? "▲" : direction === "desc" ? "▼" : "⇅"}
     </span>
   );
@@ -20,7 +20,7 @@ function SkeletonRows({ columns, rows }) {
     <tr key={r}>
       {columns.map((col) => (
         <td key={col.key} className="px-4 py-3">
-          <div className="h-4 animate-pulse rounded bg-gray-200" />
+          <div className="h-4 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
         </td>
       ))}
     </tr>
@@ -51,7 +51,7 @@ export function Table({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
         <thead>
           <tr>
             {columns.map((col) => (
@@ -66,13 +66,13 @@ export function Table({
                       : undefined
                 }
                 className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wide
-                  text-gray-500 ${col.className ?? ""}`}
+                  text-gray-500 dark:text-gray-400 ${col.className ?? ""}`}
               >
                 {col.sortable ? (
                   <button
                     type="button"
                     onClick={() => handleSort(col)}
-                    className="inline-flex items-center rounded hover:text-gray-700
+                    className="inline-flex items-center rounded hover:text-gray-700 dark:hover:text-gray-200
                       focus-visible:outline-2 focus-visible:outline-offset-2
                       focus-visible:outline-indigo-600"
                   >
@@ -86,7 +86,7 @@ export function Table({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
           {isLoading && <SkeletonRows columns={columns} rows={skeletonRows} />}
 
           {isEmpty && (
@@ -100,12 +100,17 @@ export function Table({
               <tr
                 key={row.id}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
-                className={onRowClick ? "cursor-pointer hover:bg-gray-50" : undefined}
+                className={
+                  onRowClick
+                    ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/60"
+                    : undefined
+                }
               >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`whitespace-nowrap px-4 py-3 text-sm text-gray-900 ${col.className ?? ""}`}
+                    className={`whitespace-nowrap px-4 py-3 text-sm text-gray-900
+                      dark:text-gray-100 ${col.className ?? ""}`}
                   >
                     {col.render ? col.render(row) : row[col.key]}
                   </td>

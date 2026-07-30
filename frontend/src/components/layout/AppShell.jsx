@@ -7,7 +7,7 @@ import { Topbar } from "./Topbar";
 // route in App.jsx: the matched page renders into <Outlet />.
 export function AppShell() {
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
       <Sidebar />
       {/* min-w-0 lets wide content (tables) shrink instead of overflowing */}
       <div className="flex min-w-0 flex-1 flex-col">

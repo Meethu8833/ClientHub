@@ -51,27 +51,32 @@ export function ContactList({ client, canWrite }) {
             <li
               key={contact.id}
               className="flex items-start justify-between rounded-lg bg-white p-4 shadow-sm
-                ring-1 ring-gray-200"
+                ring-1 ring-gray-200 dark:bg-gray-900 dark:ring-gray-800"
             >
               <div className="flex items-start gap-3">
                 <Avatar name={contact.name} size="lg" />
                 <div>
-                  <p className="flex items-center gap-2 text-sm font-medium text-gray-900">
+                  <p className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-50">
                     {contact.name}
                     {contact.is_primary && <Badge color="indigo">★ Primary</Badge>}
                   </p>
-                  {contact.position && <p className="text-xs text-gray-500">{contact.position}</p>}
+                  {contact.position && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{contact.position}</p>
+                  )}
                   <p className="mt-1 space-x-3 text-sm">
                     {contact.email && (
                       <a
                         href={`mailto:${contact.email}`}
-                        className="text-indigo-600 hover:underline"
+                        className="text-indigo-600 hover:underline dark:text-indigo-400"
                       >
                         {contact.email}
                       </a>
                     )}
                     {contact.phone && (
-                      <a href={`tel:${contact.phone}`} className="text-indigo-600 hover:underline">
+                      <a
+                        href={`tel:${contact.phone}`}
+                        className="text-indigo-600 hover:underline dark:text-indigo-400"
+                      >
                         {contact.phone}
                       </a>
                     )}

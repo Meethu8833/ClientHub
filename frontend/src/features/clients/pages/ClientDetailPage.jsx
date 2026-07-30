@@ -12,6 +12,7 @@ import { Tabs } from "../../../components/ui/Tabs";
 import { CLIENT_STATUS, ROLES } from "../../../lib/constants";
 import { formatDate, formatDateTime } from "../../../lib/formatters";
 import { useAuth } from "../../auth/useAuth";
+import { ClientProjectsPanel } from "../../projects/components/ClientProjectsPanel";
 import { ClientForm } from "../components/ClientForm";
 import { ContactList } from "../components/ContactList";
 import { useClient } from "../hooks/useClient";
@@ -67,8 +68,8 @@ function OverviewTab({ client }) {
       <dl className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
         {fields.map(([label, value]) => (
           <div key={label}>
-            <dt className="text-sm font-medium text-gray-500">{label}</dt>
-            <dd className="mt-0.5 text-sm text-gray-900">{value || "—"}</dd>
+            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</dt>
+            <dd className="mt-0.5 text-sm text-gray-900 dark:text-gray-100">{value || "—"}</dd>
           </div>
         ))}
       </dl>
@@ -139,20 +140,23 @@ export function ClientDetailPage() {
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="mb-2 text-sm text-gray-500">
-        <Link to="/clients" className="hover:text-gray-700 hover:underline">
+      <nav aria-label="Breadcrumb" className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+        <Link
+          to="/clients"
+          className="hover:text-gray-700 hover:underline dark:hover:text-gray-200"
+        >
           Clients
         </Link>{" "}
-        / <span className="text-gray-900">{client.name}</span>
+        / <span className="text-gray-900 dark:text-gray-100">{client.name}</span>
       </nav>
 
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-3 text-2xl font-bold text-gray-900">
+          <h1 className="flex items-center gap-3 text-2xl font-bold text-gray-900 dark:text-gray-50">
             {client.name}
             <StatusBadge map={CLIENT_STATUS} value={client.status} />
           </h1>
-          <p className="mt-1 text-sm text-gray-500">{meta}</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{meta}</p>
         </div>
         {canWrite && (
           <div className="flex items-center gap-2">
@@ -171,7 +175,7 @@ export function ClientDetailPage() {
           tabs={[
             { key: "overview", label: "Overview" },
             { key: "contacts", label: "Contacts", count: client.contacts.length },
-            { key: "projects", label: "Projects", disabled: true },
+            { key: "projects", label: "Projects" },
             { key: "documents", label: "Documents", disabled: true },
             { key: "activity", label: "Notes & Activity", disabled: true },
           ]}
@@ -182,6 +186,7 @@ export function ClientDetailPage() {
 
       {activeTab === "overview" && <OverviewTab client={client} />}
       {activeTab === "contacts" && <ContactList client={client} canWrite={canWrite} />}
+      {activeTab === "projects" && <ClientProjectsPanel client={client} canWrite={canWrite} />}
 
       <ClientForm isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} client={client} />
 

@@ -5,23 +5,29 @@ import { ROLES } from "../../lib/constants";
 
 // Live routes use NavLink; not-yet-built modules render as muted placeholders
 // so the sidebar shows the product's shape without dead links.
+// The sidebar is dark in both themes (it is the app's one always-dark
+// surface), so dark mode only deepens it rather than inverting it.
 const linkClasses = ({ isActive }) =>
   `block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-    isActive ? "bg-indigo-700 text-white" : "text-indigo-100 hover:bg-indigo-700/60"
+    isActive
+      ? "bg-indigo-700 text-white dark:bg-indigo-600"
+      : "text-indigo-100 hover:bg-indigo-700/60 dark:text-indigo-200 dark:hover:bg-indigo-800/60"
   }`;
 
 function ComingSoon({ label }) {
   return (
-    <span className="flex items-center justify-between rounded-md px-3 py-2 text-sm text-indigo-300/70">
+    <span className="flex items-center justify-between rounded-md px-3 py-2 text-sm text-indigo-300/70 dark:text-gray-500">
       {label}
-      <span className="rounded-full bg-indigo-800 px-2 py-0.5 text-[10px] uppercase">soon</span>
+      <span className="rounded-full bg-indigo-800 px-2 py-0.5 text-[10px] uppercase dark:bg-gray-800">
+        soon
+      </span>
     </span>
   );
 }
 
 export function Sidebar() {
   return (
-    <aside className="hidden w-60 shrink-0 flex-col bg-indigo-900 md:flex">
+    <aside className="hidden w-60 shrink-0 flex-col bg-indigo-900 md:flex dark:bg-gray-900">
       <div className="flex h-16 items-center px-4 text-lg font-bold text-white">
         Client<span className="text-indigo-300">Hub</span>
       </div>
@@ -35,8 +41,14 @@ export function Sidebar() {
           Clients
         </NavLink>
 
-        <ComingSoon label="Projects" />
-        <ComingSoon label="Tasks" />
+        <NavLink to="/projects" className={linkClasses}>
+          Projects
+        </NavLink>
+
+        <NavLink to="/tasks" className={linkClasses}>
+          Tasks
+        </NavLink>
+
         <ComingSoon label="Tickets" />
         <ComingSoon label="Quotations" />
 
@@ -45,7 +57,9 @@ export function Sidebar() {
           <ComingSoon label="Billing" />
         </RoleGate>
         <RoleGate roles={[ROLES.ADMIN]}>
-          <ComingSoon label="Users" />
+          <NavLink to="/admin/users" className={linkClasses}>
+            Users
+          </NavLink>
         </RoleGate>
       </nav>
     </aside>

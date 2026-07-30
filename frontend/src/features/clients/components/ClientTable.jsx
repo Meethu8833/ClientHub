@@ -40,22 +40,24 @@ export function ClientTable({
         c.account_manager ? (
           <span className="flex items-center gap-2">
             <Avatar name={c.account_manager.name} size="sm" />
-            <span className="text-gray-600">{c.account_manager.name}</span>
+            <span className="text-gray-600 dark:text-gray-300">{c.account_manager.name}</span>
           </span>
         ) : (
-          <span className="text-gray-400">Unassigned</span>
+          <span className="text-gray-400 dark:text-gray-500">Unassigned</span>
         ),
     },
     {
       key: "contact_count",
       header: "Contacts",
-      render: (c) => <span className="text-gray-600">{c.contact_count}</span>,
+      render: (c) => <span className="text-gray-600 dark:text-gray-300">{c.contact_count}</span>,
     },
     {
       key: "created_at",
       header: "Created",
       sortable: true,
-      render: (c) => <span className="text-gray-600">{formatDate(c.created_at)}</span>,
+      render: (c) => (
+        <span className="text-gray-600 dark:text-gray-300">{formatDate(c.created_at)}</span>
+      ),
     },
     // The actions column only exists for roles that can act — STAFF sees a
     // clean table, not a row of disabled buttons (matrix §8: read-only).

@@ -13,7 +13,7 @@ export function ProtectedRoute() {
   // would bounce a logged-in user to /login on every F5.
   if (isBooting) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
         <Spinner size="lg" className="text-indigo-600" />
       </div>
     );

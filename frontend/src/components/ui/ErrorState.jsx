@@ -6,9 +6,10 @@ export function ErrorState({ message = "Something went wrong loading this data."
   return (
     <div
       role="alert"
-      className="flex flex-col items-center justify-center rounded-lg border border-red-200 bg-red-50 px-6 py-10 text-center"
+      className="flex flex-col items-center justify-center rounded-lg border border-red-200
+        bg-red-50 px-6 py-10 text-center dark:border-red-900/50 dark:bg-red-950/30"
     >
-      <p className="text-sm text-red-700">{message}</p>
+      <p className="text-sm text-red-700 dark:text-red-300">{message}</p>
       {onRetry && (
         <Button variant="secondary" className="mt-3" onClick={onRetry}>
           Try again

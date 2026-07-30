@@ -54,7 +54,11 @@ export function Modal({ isOpen, onClose, title, size = "md", children, footer })
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-      <div className="fixed inset-0 bg-gray-900/50" onClick={onClose} aria-hidden="true" />
+      <div
+        className="fixed inset-0 bg-gray-900/50 dark:bg-black/70"
+        onClick={onClose}
+        aria-hidden="true"
+      />
       <div
         ref={panelRef}
         role="dialog"
@@ -62,15 +66,15 @@ export function Modal({ isOpen, onClose, title, size = "md", children, footer })
         aria-label={title}
         tabIndex={-1}
         className={`relative w-full ${SIZES[size]} max-h-[90vh] overflow-y-auto rounded-lg
-          bg-white p-6 shadow-xl`}
+          bg-white p-6 shadow-xl dark:bg-gray-900 dark:ring-1 dark:ring-gray-800`}
       >
         <div className="flex items-start justify-between">
-          <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-50">{title}</h2>
           <button
             type="button"
             aria-label="Close"
             onClick={onClose}
-            className="rounded p-1 text-gray-400 hover:text-gray-600 focus-visible:outline-2
+            className="rounded p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 focus-visible:outline-2
               focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             <svg

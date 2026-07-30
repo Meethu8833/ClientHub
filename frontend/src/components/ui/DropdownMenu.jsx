@@ -52,7 +52,8 @@ export function DropdownMenu({ label = "Actions", items }) {
           setIsOpen((open) => !open);
         }}
         className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
+          dark:hover:bg-gray-800 dark:hover:text-gray-200"
       >
         <svg aria-hidden="true" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
@@ -64,7 +65,7 @@ export function DropdownMenu({ label = "Actions", items }) {
           ref={menuRef}
           role="menu"
           className="absolute right-0 z-10 mt-1 w-40 rounded-md bg-white py-1 shadow-md
-            ring-1 ring-gray-200"
+            ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700"
         >
           {items.map((item) => (
             <button
@@ -78,7 +79,12 @@ export function DropdownMenu({ label = "Actions", items }) {
               }}
               className={`block w-full px-3 py-2 text-left text-sm hover:bg-gray-50
                 focus-visible:bg-gray-50 focus-visible:outline-none
-                ${item.tone === "danger" ? "text-red-600" : "text-gray-700"}`}
+                dark:hover:bg-gray-700 dark:focus-visible:bg-gray-700
+                ${
+                  item.tone === "danger"
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-gray-700 dark:text-gray-200"
+                }`}
             >
               {item.label}
             </button>

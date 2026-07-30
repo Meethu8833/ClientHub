@@ -14,17 +14,7 @@ import { forwardRef, useEffect, useId, useRef, useState } from "react";
 // it always matches the input's width at any viewport size, and it scrolls
 // internally past ~8 visible rows.
 export const AutocompleteInput = forwardRef(function AutocompleteInput(
-  {
-    label,
-    error,
-    hint,
-    suggestions = [],
-    onSelect,
-    className = "",
-    onChange,
-    onBlur,
-    ...rest
-  },
+  { label, error, hint, suggestions = [], onSelect, className = "", onChange, onBlur, ...rest },
   ref
 ) {
   const id = useId();
@@ -84,7 +74,7 @@ export const AutocompleteInput = forwardRef(function AutocompleteInput(
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
         {label}
       </label>
       <input
@@ -99,7 +89,12 @@ export const AutocompleteInput = forwardRef(function AutocompleteInput(
         aria-invalid={error ? "true" : undefined}
         className={`mt-1 block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm
           ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm
-          ${error ? "ring-red-400 focus:ring-red-500" : "ring-gray-300 focus:ring-indigo-600"}`}
+          dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500
+          ${
+            error
+              ? "ring-red-400 focus:ring-red-500 dark:ring-red-500/70"
+              : "ring-gray-300 focus:ring-indigo-600 dark:ring-gray-600 dark:focus:ring-indigo-400"
+          }`}
         onFocus={() => setIsOpen(true)}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -119,7 +114,7 @@ export const AutocompleteInput = forwardRef(function AutocompleteInput(
           // tracks the field across breakpoints instead of overflowing small
           // screens.
           className="absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-md bg-white py-1
-            text-sm shadow-lg ring-1 ring-gray-200"
+            text-sm shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700"
         >
           {matches.map((option, i) => (
             <li
@@ -132,7 +127,7 @@ export const AutocompleteInput = forwardRef(function AutocompleteInput(
               onClick={() => choose(option)}
               onMouseEnter={() => setHighlighted(i)}
               className={`cursor-pointer px-3 py-2 ${
-                i === highlighted ? "bg-indigo-600 text-white" : "text-gray-900"
+                i === highlighted ? "bg-indigo-600 text-white" : "text-gray-900 dark:text-gray-100"
               }`}
             >
               {option}
@@ -140,7 +135,7 @@ export const AutocompleteInput = forwardRef(function AutocompleteInput(
           ))}
         </ul>
       )}
-      {hint && !error && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
+      {hint && !error && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{hint}</p>}
       {error && (
         <p className="mt-1 text-xs text-red-600" role="alert">
           {error}

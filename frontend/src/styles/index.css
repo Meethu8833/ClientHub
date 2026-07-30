@@ -2,3 +2,50 @@
    and the tailwind.config.js file — theme customisation happens in CSS via
    @theme blocks when we need it. */
 @import "tailwindcss";
+
+/* Dark mode is CLASS-driven, not media-driven.
+   ---------------------------------------------------------------------------
+   Tailwind v4's default `dark:` variant follows `prefers-color-scheme`, which
+   would make an in-app toggle impossible: the OS would always win. This custom
+   variant re-points `dark:` at a `.dark` class on <html>, so the toggle owns
+   the decision and "System" simply means "mirror the OS setting onto that
+   class" (see useTheme.js).
+
+   `@custom-variant` is the v4 replacement for `darkMode: "class"` in the old
+   JS config, which no longer exists. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tell the browser which built-in light/dark styling to use — form controls,
+   scrollbars and the like. Without this a native <select> menu or a scrollbar
+   stays light-on-light in dark mode even though everything around it flipped. */
+:root {
+  color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
+/* The toggle writes to <html> before React mounts (see the inline script in
+   index.html), so there is no flash of the wrong theme on load. This rule just
+   keeps the page canvas correct during that first paint, before the app shell
+   has rendered its own background. */
+html {
+  background-color: #f9fafb; /* gray-50 — the light canvas */
+}
+
+html.dark {
+  background-color: #0f172a; /* slate-900 — the dark canvas */
+}
+
+/* Respect the OS "reduce motion" setting (design doc §1.5). The theme
+   transition below is the main thing this turns off. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

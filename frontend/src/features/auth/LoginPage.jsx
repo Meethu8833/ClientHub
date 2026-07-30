@@ -45,17 +45,19 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-950">
       <div className="w-full max-w-sm">
-        <h1 className="text-center text-2xl font-bold text-indigo-900">
+        <h1 className="text-center text-2xl font-bold text-indigo-900 dark:text-indigo-200">
           Client<span className="text-indigo-400">Hub</span>
         </h1>
-        <p className="mt-1 text-center text-sm text-gray-500">Sign in to your account</p>
+        <p className="mt-1 text-center text-sm text-gray-500 dark:text-gray-400">
+          Sign in to your account
+        </p>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
-          className="mt-8 space-y-4 rounded-lg bg-white p-6 shadow"
+          className="mt-8 space-y-4 rounded-lg bg-white p-6 shadow dark:bg-gray-900 dark:ring-1 dark:ring-gray-800"
         >
           {serverError && (
             <div className="rounded-md bg-red-50 p-3 text-sm text-red-700" role="alert">

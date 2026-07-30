@@ -5,6 +5,18 @@
 export const PHONE_PATTERN = /^\+?[0-9](?:[ \-()]{0,2}[0-9]){6,14}$/;
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Normalises a checkbox-group field into an array of numeric ids.
+//
+// react-hook-form only returns an array when 2+ checkboxes share a name. With
+// exactly ONE box in the group it returns that box's value string (checked) or
+// `false` (unchecked) — so a project with a single technology, or a task with
+// a single possible blocker, would otherwise crash the submit handler on
+// `.map`. Callers pass the raw field value; they always get an array back.
+export function toIdArray(value) {
+  if (Array.isArray(value)) return value.map(Number);
+  return value ? [Number(value)] : [];
+}
+
 // Maps a DRF 400 body onto react-hook-form fields (ARCHITECTURE §11:
 // "API validation errors mapped back onto fields").
 //

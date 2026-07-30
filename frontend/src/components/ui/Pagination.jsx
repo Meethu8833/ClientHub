@@ -13,9 +13,10 @@ export function Pagination({ page, pageSize = 20, count, onPageChange }) {
   return (
     <nav
       aria-label="Pagination"
-      className="flex items-center justify-between border-t border-gray-200 px-4 py-3"
+      className="flex items-center justify-between border-t border-gray-200 px-4 py-3
+        dark:border-gray-800"
     >
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-gray-600 dark:text-gray-400">
         Showing <span className="font-medium">{from}</span>–
         <span className="font-medium">{to}</span> of <span className="font-medium">{count}</span>
       </p>
@@ -23,7 +24,7 @@ export function Pagination({ page, pageSize = 20, count, onPageChange }) {
         <Button variant="secondary" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
           Previous
         </Button>
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-gray-600 dark:text-gray-400">
           Page {page} of {totalPages}
         </span>
         <Button
